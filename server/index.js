@@ -81,7 +81,6 @@ async function broadcastMessage(message, id){
     ]}})
     console.log(response, response2);
     if(response || response2){
-        console.log('ffffffffffffffffffffff');
         wss.clients.forEach((client)=>{
             WebSocketController.query(client.id || 0, message)
             .then((e)=>client.send(JSON.stringify(e)))
