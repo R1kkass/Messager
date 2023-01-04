@@ -81,13 +81,13 @@ async function broadcastMessage(message, id){
     ]}})
     console.log(response, response2);
     if(response || response2){
-        console.log('ffffffffffffffffffffff');
         wss.clients.forEach((client)=>{
+            console.log(client.id);
+            if(client.id == message.id){
             WebSocketController.query(client.id || 0, message)
             .then((e)=>client.send(JSON.stringify(e)))
+            }
         })
-    }else{
-        wss.close()
     }
     
     }catch(e){

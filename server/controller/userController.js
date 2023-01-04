@@ -4,9 +4,9 @@ const {User} = require('../models/model')
 const jwt = require('jsonwebtoken')
 
 
-const generateJwt = (id, email, role) => {
+const generateJwt = (id, email, role, img) => {
     return jwt.sign(
-        {id, email, role},
+        {id, email, role, img},
         'code',
         {expiresIn: '24h'}
     )
@@ -46,7 +46,7 @@ class UserController{
         if (!comparePassword) {
             return next(ApiError.internal('Указан неверный пароль'))
         }
-        const token = generateJwt(user.id, user.email, user.role)
+        const token = generateJwt(user.id, user.email, user.role, user.img)
         return res.json({token})
     }catch(e){
         return ApiError.badRequest(e.message)
