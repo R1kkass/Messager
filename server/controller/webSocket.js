@@ -8,6 +8,7 @@ async addMessage(message){
 }
 
 async query(id, message){
+    console.log(id);
     let page = 1
     let limit = message.limit
     let offset = limit*page-limit

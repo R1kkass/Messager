@@ -8,18 +8,17 @@ const chatController = require('./chatController')
 class SettingController{
     async create(req, res, next){
         try{
+            
         let {email} = req.body
         
         const {img} = req.files
-        
-        let fileName = uuid.v4() + '.jpg'
+        console.log('tit');
+        let fileName = email + '.jpg'
         
         const device = await User.update({img: fileName}, {where: {email: email}})
         
-        console.log(img.length+'------------------------------')
-        console.log(fileName);
         img.mv(path.resolve(__dirname, '..','static', fileName))
-        return res.json(device)
+        return res.json({message: true})
     } catch (e){
         return (ApiError.badRequest(e.message))
     }
