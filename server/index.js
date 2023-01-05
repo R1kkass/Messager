@@ -55,7 +55,7 @@ app.ws('/con', (ws,req)=>{
                 broadcastMessage(message)
                 break
             case "delete":
-                WebSock.delete(message.idDelete, message.username)
+                WebSock.delete(message.idDelete, message.username, message.idRoom)
                 .finally(()=>{
                     broadcastMessage(message)
                 })
@@ -96,7 +96,6 @@ async function broadcastMessage(message, id){
                 .then((e)=>client.send(JSON.stringify(e)))
             }
             if(client.event == "connectionChat"){
-                console.log('tut');
                client.send(JSON.stringify({message: true}))
             }
         })
