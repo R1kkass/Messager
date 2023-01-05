@@ -42,6 +42,7 @@ app.ws('/con', (ws,req)=>{
         switch(message.event){
             case "connection": 
                 ws.id = message.id
+                ws.event=message.event
                 broadcastMessage(message)
                 break
             case "message":
@@ -54,10 +55,16 @@ app.ws('/con', (ws,req)=>{
                 broadcastMessage(message)
                 break
             case "delete":
-                WebSock.delete(message.idDelete, message.user)
-                .then(()=>{
+                WebSock.delete(message.idDelete, message.username)
+                .finally(()=>{
                     broadcastMessage(message)
                 })
+                break
+            case "connectionChat": 
+                ws.id = message.id
+                ws.event=message.event
+                ws.username=message.username
+                broadcastMessage(message)
                 break
         }
     })
@@ -66,26 +73,31 @@ app.ws('/con', (ws,req)=>{
 
 async function broadcastMessage(message, id){
     try{
-    limit =  message.limit || 10
-    page = 1
-    offset = page * limit - limit
-    const response = await models.Chat.findOne({where:{
-        [Op.and]: [
+        limit =  message.limit || 10
+        page = 1
+        offset = page * limit - limit
+        console.log('tit');
+        const response = await models.Chat.findOne({where:{
+            [Op.and]: [
+                { idRoom: message.id }, 
+            {userCreator: message.username},
+        ]}})
+        const response2 = await models.Chat.findOne({where:{
+            [Op.and]: [
             { idRoom: message.id }, 
-        {userCreator: message.username},
-    ]}})
-    const response2 = await models.Chat.findOne({where:{
-        [Op.and]: [
-        { idRoom: message.id }, 
-        {secondUser: message.username},
-    ]}})
-    console.log(response, response2);
-    if(response || response2){
-        wss.clients.forEach((client)=>{
-            console.log(client.id);
-            if(client.id == message.id){
-            WebSocketController.query(client.id || 0, message)
-            .then((e)=>client.send(JSON.stringify(e)))
+            {secondUser: message.username},
+        ]}})
+        
+        if(response || response2){
+            wss.clients.forEach((client)=>{
+                console.log(client.event + '=================== '+client.event);
+                if(client.id == message.id){
+                WebSocketController.query(client.id || 0, message)
+                .then((e)=>client.send(JSON.stringify(e)))
+            }
+            if(client.event == "connectionChat"){
+                console.log('tut');
+               client.send(JSON.stringify({message: true}))
             }
         })
     }

@@ -14,7 +14,8 @@ const Chat = sequelize.define('chats',{
     userCreator:{type: DataTypes.STRING},
     secondUser: {type: DataTypes.STRING},
     users: {type: DataTypes.STRING, unique: true},
-    idRoom: {type: DataTypes.STRING}
+    idRoom: {type: DataTypes.STRING},
+    lastMessage: {type: DataTypes.STRING, defaultValue: ''}
 })
 
 
@@ -23,7 +24,8 @@ const User = sequelize.define('user', {
     email: {type: DataTypes.STRING, unique: true,},
     password: {type: DataTypes.STRING},
     role: {type: DataTypes.STRING, defaultValue: "USER"},
-    img:{type: DataTypes.STRING, defaultValue: 'none'}
+    img:{type: DataTypes.STRING, defaultValue: 'none'},
+    
 })
 
 module.exports={

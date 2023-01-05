@@ -14,13 +14,12 @@ class SettingController{
         const {img} = req.files
         console.log('tit');
         let fileName = email + '.jpg'
-        
         const device = await User.update({img: fileName}, {where: {email: email}})
-        
+
         img.mv(path.resolve(__dirname, '..','static', fileName))
-        return res.json({message: true})
+        return res.json({device})
     } catch (e){
-        return (ApiError.badRequest(e.message))
+        return ApiError.badRequest(e.message)
     }
 }}
 
