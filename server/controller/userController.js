@@ -61,7 +61,7 @@ class UserController{
     async getOne(req, res){
         try{
         const {id} = req.body
-        const user = await User.findOne({where: {id: id}})
+        const user = await User.findOne({where: {email: id}})
         return res.json({user})
         }catch(e){
             return ApiError.badRequest(e.message)

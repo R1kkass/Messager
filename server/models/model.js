@@ -16,7 +16,8 @@ const Chat = sequelize.define('chats',{
     users: {type: DataTypes.STRING, unique: true},
     idRoom: {type: DataTypes.STRING},
     lastMessage: {type: DataTypes.STRING, defaultValue: ''},
-    lastUser: {type: DataTypes.STRING, defaultValue: ''}
+    lastUser: {type: DataTypes.STRING, defaultValue: ''},
+    lastId: {type: DataTypes.STRING}
 })
 
 

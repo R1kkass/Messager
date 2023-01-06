@@ -1,6 +1,6 @@
 const ApiError = require("../error/ApiError")
 const bcrypt = require("bcrypt")
-const {User, Chat} = require('../models/model')
+const {User, Chat, Message} = require('../models/model')
 const jwt = require('jsonwebtoken')
 const {Op} = require('sequelize')
 
@@ -14,7 +14,10 @@ class ChatController{
             if(find){
                 return res.json({find:'error'})
             }
-            const response = await Chat.create({userCreator:email,secondUser: secondEmail, users: add, idRoom: date})
+            
+            const response = await Chat.create({userCreator:email,
+                secondUser: secondEmail, users: add, idRoom: date})
+            
             return res.json({response:response})
         }catch(e){
             return ApiError.badRequest(e.message)
@@ -26,7 +29,7 @@ class ChatController{
         const {email} = req.query
         const user = await Chat.findAll({where: {
             [Op.or]: [{ userCreator: email }, { secondUser: email }],
-        }})
+        }, order: [["lastId","DESC"]]})
         console.log(user);
         return res.json({user})
         }catch(e){
