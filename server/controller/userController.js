@@ -4,9 +4,9 @@ const {User} = require('../models/model')
 const jwt = require('jsonwebtoken')
 
 
-const generateJwt = (id, email, role, img) => {
+const generateJwt = (id, email, role, img, name) => {
     return jwt.sign(
-        {id, email, role, img},
+        {id, email, role, img, name},
         'code',
         {expiresIn: '24h'}
     )
@@ -15,11 +15,10 @@ const generateJwt = (id, email, role, img) => {
 class UserController{
     async registration(req, res, next){
         try{
-            console.log(req.body);
-        const {email, password,role} = req.body
+        const {email, password, role, firstName, lastName} = req.body
         console.log('tut2');
-        if (!email || !password) {
-            return next(ApiError.badRequest('Некорректный email или password'))
+        if (!email || !password || !firstName || !lastName) {
+            return next(ApiError.badRequest('Некорректный данные'))
         }
         const candidate = await User.findOne({where: {email}})
         if (candidate) {
@@ -27,7 +26,7 @@ class UserController{
         }
         const hashPassword = await bcrypt.hash(password, 5)
         
-        const user = await User.create({email, role, password: hashPassword})
+        const user = await User.create({email, role, password: hashPassword, name: firstName + ' ' + lastName})
         const token = generateJwt(user.id, user.email, user.role)
         return res.json({token})
     }catch(e){
@@ -46,7 +45,7 @@ class UserController{
         if (!comparePassword) {
             return next(ApiError.internal('Указан неверный пароль'))
         }
-        const token = generateJwt(user.id, user.email, user.role, user.img)
+        const token = generateJwt(user.id, user.email, user.role, user.img, user.name)
         return res.json({token})
     }catch(e){
         return ApiError.badRequest(e.message)
@@ -61,7 +60,7 @@ class UserController{
     async getOne(req, res){
         try{
         const {id} = req.body
-        const user = await User.findOne({where: {email: id}})
+        const user = await User.findOne({where: {id: id}})
         return res.json({user})
         }catch(e){
             return ApiError.badRequest(e.message)

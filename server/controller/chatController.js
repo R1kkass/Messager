@@ -14,8 +14,13 @@ class ChatController{
             if(find){
                 return res.json({find:'error'})
             }
+            const takeUserCreator = await User.findOne({where: {email: email}})
             
+            const takeSecondCreator = await User.findOne({where: {email: secondEmail}})
+
             const response = await Chat.create({userCreator:email,
+                userCreatorId: takeUserCreator.id,
+                secondUserId: takeSecondCreator.id,
                 secondUser: secondEmail, users: add, idRoom: date})
             
             return res.json({response:response})

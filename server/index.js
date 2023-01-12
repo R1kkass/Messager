@@ -8,7 +8,6 @@ const models = require('./models/model')
 const WebSock = require("./websockets/websockets")
 const router = require('./routes/index')
 const WebSocketController = require('./controller/webSocket')
-const { wsCall } = require('./websockets/switchCaseWS')
 const path = require('path')
 const cors = require('cors')
 const fileUpload = require('express-fileupload')
@@ -16,7 +15,7 @@ const webSocket = require('./controller/webSocket')
 const {Op} = require('sequelize')
 const ApiError = require('./error/ApiError')
 const authMiddleware = require('./middleware/authMiddleware')
-
+const NewsController = require('./controller/feedController')
 
 app.use(cors())
 app.use(express.json())
@@ -70,6 +69,30 @@ app.ws('/con', (ws,req)=>{
     })
 })
 
+app.ws('/news', (ws,req)=>{
+    ws.on("message", function(message){
+        message = JSON.parse(message)
+        switch(message.event){
+            case "connectionNews": 
+                ws.id = message.id
+                ws.event=message.event
+                fetchFeedNews(message)
+                break
+            case "newsAdd":
+                fetchFeedNews(message)
+                break
+        }
+    })
+})
+
+async function fetchFeedNews(message){
+    if(message.event !== 'connectionNews'){
+        wss.clients.forEach((client)=>{
+            client.send(JSON.stringify({message: true}))
+        })
+    }
+   
+}
 
 async function broadcastMessage(message, id){
     try{
