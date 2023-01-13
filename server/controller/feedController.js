@@ -42,6 +42,7 @@ class FeedController{
 
     async getAll(req, res){
         try{
+            console.log('tut');
         let feed
         const {id, limit} = req.query
         if(id){
